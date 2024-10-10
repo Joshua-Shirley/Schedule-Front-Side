@@ -1,0 +1,41 @@
+.btn-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #9b2022;
+    --bs-btn-border-color: #9b2022;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #bb2d3b;
+    --bs-btn-hover-border-color: #b02a37;
+    --bs-btn-focus-shadow-rgb: 225, 83, 97;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #b02a37;
+    --bs-btn-active-border-color: #a52834;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #9b2022;
+    --bs-btn-disabled-border-color: #9b2022;
+}
+
+header {
+    background-color: #414143;
+}
+
+footer {
+    background-color: #414143;
+}
+
+.accordion-button {
+    background-color: #b60505;
+    color: #ece8e8;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #d4d9e1;
+    background-color: #980404;
+    box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 #7a2525;
+}
+
+.accordion-body {
+    background-color: #d4e0ec;
+    color: black;
+}
+
