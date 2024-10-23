@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script>
+            
+        </script>
+    </head>
+    <body>
+        <div id="attach">Something</div>
+        <script>
+            const target = document.querySelector("#attach");
+            let data = null;
+            let index = 0;
+            function block(innerText) {
+                var div = document.createElement("div");                
+                div.innerText = ++index + ' ' + innerText;
+                target.append(div);
+            }
+
+            const url = "https://instructor-snow-com.s3.us-west-1.amazonaws.com/data/2024-2025.json";
+            // fetch( url )
+            // .then( response => { response.json(); block("fetch"); })            
+            // .then( data => {
+            //     block( "New Data" );
+            //     block( JSON.stringify(data) );
+            // })
+            // .catch( error => {
+            //     console.error(error);
+            // });
+
+            async function fetchAsync (url) {
+                let response = await fetch(url);
+                let data = await response.json();  
+                localStorage.clear();
+                localStorage.setItem("schedule", JSON.stringify(data));
+            
+                block( localStorage.getItem("schedule") );
+                return data;
+            }
+
+            fetchAsync(url);
+                       
+        </script>
+    </body>
+</html>

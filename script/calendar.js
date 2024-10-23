@@ -1,5 +1,6 @@
 class Calendar {
-    constructor(date) {
+    constructor(date, urlController, schedule) {
+        this.linkGenerator = urlController;
         if (!date) {
             var date = new Date();
         }
@@ -8,6 +9,19 @@ class Calendar {
         this.month = date.getMonth();
         this.list = [];
         this.loadList(this.entryDate);
+        
+        // load scheduled dates
+        if(schedule instanceof Object) {
+            this.schedule = this.includeSchedule();
+        }
+    }
+    includeSchedule() {
+        // load the schedule
+        const list = Object.keys(schedule.data);
+        const keys = list.filter((key) => (new Date(key)).getMonth() == this.month);
+        // month
+
+        // 
     }
     loadList(date) {
         // first day of the month
@@ -21,10 +35,8 @@ class Calendar {
         // add these dates into the calendar list array
         var rolling = sunday;
         while (!rolling.moreThan(lastDay)) {
-            //console.log(rolling.getDay(), rolling);            
             this.list.push(rolling);
             rolling = this.nextDay(rolling);
-            //console.log(builder(this.tableCell(rolling)));
         }
     }
     nextDay(date) {
@@ -41,6 +53,13 @@ class Calendar {
             date = this.nextDay(date);
         }
         return date;
+    }
+    linkBuilder(date) { 
+        if( date instanceof Date) {           
+            return this.linkGenerator.link(date);
+        } else {
+            throw error (date, " is not a DateTime object.");
+        }
     }
     view() {
         var parts = [];
@@ -59,22 +78,20 @@ class Calendar {
         var previousMonth = new Date(this.entryDate.getFullYear(), this.entryDate.getMonth() -1 , 1);
         var nextMonth = new Date(this.entryDate.getFullYear(), this.entryDate.getMonth() + 1, 1);
         var div = {
-            "tag" : "div",
-            "class" : ["row", "text-center", "align-items-start", "p-4"],
+            "tag" : "div",            
+            "class" : ["row", "align-items-start", "text-center"],
             "children" : [
                 {
                     "tag": "div",
                     "class": ["col"],
                     "children" : [
                         {
-                            "tag": "button",
+                            "tag": "a",
                             "class" : ["btn","btn-dark"],
                             "innerText": previousMonth.toLocaleDateString("default", { month: "long" }),
                             "attributes": [
-                                { 
-                                    "type":"button",                                     
-                                    "value": previousMonth.toISOString(),
-                                    "onclick": "loadMonth('" + previousMonth.toISOString() + "')"
+                                {                                     
+                                    "href" : this.linkBuilder(previousMonth),
                                 }
                             ]
                         },
@@ -86,10 +103,10 @@ class Calendar {
                     "children" : [                        
                         {
                             "tag" : "a",
-                            "class" : ["btn", "btn-dark-2", "mx-1"],
+                            "class" : ["btn", "btn-dark-2"],
                             "attributes" : [
                                 {
-                                    "href" : "?date=" + (new Date()).toLocaleString("default", { month: "2-digit", day: "2-digit", year: "numeric"}).replaceAll("/","-"),
+                                    "href" : this.linkBuilder(new Date()),
                                 }
                             ],
                             "innerText" : "Today"
@@ -101,14 +118,12 @@ class Calendar {
                     "class": ["col"],
                     "children" : [
                         {
-                            "tag": "button",
+                            "tag": "a",
                             "class" : ["btn","btn-dark"],
                             "innerText": nextMonth.toLocaleDateString("default", { month: "long" }),
                             "attributes": [
-                                { 
-                                    "type":"button",                                     
-                                    "value": nextMonth.toISOString(),
-                                    "onclick": "loadMonth('" + nextMonth.toISOString() + "')"
+                                {                                     
+                                    "href" : this.linkBuilder(nextMonth),
                                 }
                             ]
                         }
@@ -228,8 +243,8 @@ class Calendar {
                     "class": classes,
                     "attributes": [
                         {
-                            "date": dateString,
-                            "href": "?date=" + dateString
+                            "date": dateString,                            
+                            "href": this.linkBuilder(date),
                         }
                     ],
                     "innerText": date.getDate(),

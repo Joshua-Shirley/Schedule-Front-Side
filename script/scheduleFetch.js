@@ -3,7 +3,10 @@ const schedule = {
     url: "https://instructor-snow-com.s3.us-west-1.amazonaws.com/data/2024-2025.json",
     data: null,
     //expire : null,
-    initiate: function (date = (new Date())) {
+    initiate: function (date = (new Date()), callback) {
+        // save the callback function reference
+        this.callback = callback;
+
         // set the date for the date view
         this.date = date;
 
@@ -14,14 +17,19 @@ const schedule = {
         this.loadView();
     },
     get: function () {
+        
         fetch(this.url)
             .then(response => response.json())
             .then(data => {
+                
                 // set the data expiration                        
                 var expiration = schedule.setExpire();
 
                 // merge the new data into the existing data
                 this.mergeData(data, expiration);
+
+                // callback
+                this.callback();
             })
             .catch(error => {
                 console.error("Error: ", error);

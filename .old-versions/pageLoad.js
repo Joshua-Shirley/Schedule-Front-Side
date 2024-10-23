@@ -1,5 +1,15 @@
-// Load up the calendar
-// starting with the current date - today
+function loadingTitles(date) {    
+    try {
+        // The Page Title
+        document.title = 'Schedule - ' + date.toDateString();
+
+        // Set the page title
+        document.querySelector("#title-date").innerText = target.toLocaleDateString("default", { weekday: "long", month: "numeric", day: "numeric", year: "numeric" });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
 
 function loadCalendar(date) {
     const calendar = new Calendar(date);
@@ -14,11 +24,12 @@ function loadCalendar(date) {
 function loadMonth(date) {
     try {
         var d = new Date(date);
+        loadCalendar(d);
     }
     catch (error) {
         console.error(error, "not an actual date.");
-    }
-    loadCalendar(d);
+        return;
+    }    
 }
 
 function calendarSchedule(monthNumber) {
@@ -55,54 +66,3 @@ function calendarSchedule(monthNumber) {
         }
     });
 }
-
-
-function loadingTitles(date) {
-    // The Page Title
-    document.title = 'Schedule - ' + date.toDateString();
-
-    // Set the page title
-    document.querySelector("#title-date").innerText = target.toLocaleDateString("default", { weekday: "long", month: "numeric", day: "numeric", year: "numeric" });
-
-}
-
-const paramsString = window.location.search;
-const searchParams = new URLSearchParams(paramsString);
-if (searchParams.has("date")) {
-    var target = new Date(searchParams.get("date"));
-
-    loadingTitles(target);
-
-    // Can I load the scheduled dates into the calendar view
-    schedule.initiate(target);
-
-    loadCalendar(target);
-} else {
-    var today = new Date();
-    window.location.href = "schedule.html?date=" + today.toLocaleDateString().replaceAll("/", "-");
-}
-
-// Blank Page Filer
-// 1 - count down to first day
-// 2 - organize the json request
-
-// General
-// 1 - the json request - does it need to happen every page change? can that be reduced to one call per visit
-// 2 - maybe add a forced fetch
-
-// FIX ME - PYTHON
-// 1 - Date formats - 00:00:00.000Z (requires 3 zeros)
-// 2 - Change the dictionary structure to accomdate the expiration date
-
-// FIX ME Calendar
-// 1 - calendar pop up and close
-// 2 - done - add in colored backgrounds for scheduled days
-// 3 - skip - add in a year dropdown - this isn't completely necessary per UX
-// 4 - done- "today" should be moved to the calendar pop up.
-
-// BOOK
-// 1 - can a form be submitted directly to microsoft forms
-// 2 -
-
-// STYLE
-// 1 - can bootstrap be removed for less code overhead?

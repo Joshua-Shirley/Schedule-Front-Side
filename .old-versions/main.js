@@ -30,6 +30,3 @@ function findNextEvent(data, date = new Date()){
 
     return newDate;
 }
-
-var blank = new Date()
-var today = new Date(blank.getFullYear(), blank.getMonth(), blank.getDate(), 0, 0 , 0, 0);

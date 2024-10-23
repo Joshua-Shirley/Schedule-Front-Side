@@ -8,7 +8,7 @@
   <title>Index</title>
   <script>
     var today = new Date();
-    window.location.href = "schedule.html?date=" + today.toLocaleDateString().replaceAll("/","-");
+    window.location.href = "schedule.html?date=" + today.toISOString();
   </script>  
 </head>
 <body>
