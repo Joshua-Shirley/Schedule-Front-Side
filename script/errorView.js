@@ -4,8 +4,9 @@ class ErrorDisplay {
         this.controller = urlController;
         var today = new Date();
         this.date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        this.return = "";
         this.queue = [];
-        this.style();
+        this.style();        
     }
     throw(title, message) {
         var time = new Date();
@@ -33,6 +34,7 @@ class ErrorDisplay {
         style.append(css.join(""));
     }
     bubbleError(obj) {
+        //console.log( typeof obj.message );        
         const error = {
             "tag": "div",
             "class": ["row", "errorItem"],
@@ -51,15 +53,22 @@ class ErrorDisplay {
                     "tag": "div",
                     "class": ["col-12"],
                     "innerText": obj.title,
-                },
-
-                {
-                    "tag": "div",
-                    "class": ["col-12", "message"],
-                    "innerText": obj.message,
-                },
+                }                
             ]
         }
+        var message = {
+            "tag" : "div",
+            "class" : ["col-12", "message"]
+        }
+        if( typeof obj.message == "object" ) {
+            message["children"] = [];
+            message["children"].push(obj.message);
+        } else {
+            message["innerText"] = obj.message;
+        }
+
+        error["children"].push(message);
+        
         return error;
     }
     bubbleErrors() {
@@ -78,7 +87,7 @@ class ErrorDisplay {
                 {
                     "tag": "div",
                     "class": ["header"],
-                    "innerText": "Thrown Errors"
+                    "innerText": "Errors"
                 },
                 {
                     "tag": "div",
@@ -95,6 +104,7 @@ class ErrorDisplay {
                             "attributes": [
                                 {
                                     "href": this.linkWithDate(),
+                                    //"href" : this.returnLink(),
                                 }
                             ],
                             "innerText": "Return",
@@ -104,6 +114,13 @@ class ErrorDisplay {
             ]
         }
         return errorBubble;
+    }
+    returnLink() {
+        var page = "error.html";
+        if (this.returnLink != null) {
+            page = this.returnLink;
+        } 
+        return (new URLControl(page)).link()
     }
     linkWithDate() {
         const url = new URL(window.location.href);

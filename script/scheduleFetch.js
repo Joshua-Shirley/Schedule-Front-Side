@@ -1,7 +1,8 @@
 const schedule = {
     date: null,
-    url: "https://instructor-snow-com.s3.us-west-1.amazonaws.com/data/2024-2025.json",
+    url: "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/daily",
     data: null,
+    credentials: null,
     //expire : null,
     initiate: function (date = (new Date()), callback) {
         // save the callback function reference
@@ -10,14 +11,16 @@ const schedule = {
         // set the date for the date view
         this.date = date;
 
+        // check credentials
+        this.credentials = this.getCredentials();
+
         // Get local
         this.getLocal();
 
         // build the html elements from the data and load it.
         this.loadView();
     },
-    get: function () {
-        
+    get: function () {        
         fetch(this.url)
             .then(response => response.json())
             .then(data => {
@@ -35,6 +38,54 @@ const schedule = {
                 console.error("Error: ", error);
             });
     },
+    post: function() {        
+        fetch(this.url, {method : "POST", body : JSON.stringify(this.credentials), headers : { "Content-Type" : "application/json"} })
+            .then(response => response.json())
+            .then(data => {                
+                if ( !data.hasOwnProperty("error") ) {
+                    // set the data expiration                        
+                    var expiration = schedule.setExpire();
+
+                    // merge the new data into the existing data
+                    this.mergeData(data, expiration);
+
+                    // callback
+                    this.callback();
+                }
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+            });
+    },
+    getCredentials: function() {
+        if( localStorage.getItem("settings") ){   
+            const obj = {};         
+            var settings = JSON.parse(localStorage.getItem("settings"));
+            obj["userId"] = settings.passNumber;
+            obj["password"] = settings.password;
+            obj["date"] = schedule.date.toISOString();
+            return obj
+        }
+        var message = { 
+            "tag" : "div",
+            "children" : [
+                {
+                    "tag" : "p",
+                    "innerText" : "Invalid Credentials - Add valid credentials on the settings page."
+                },
+                {
+                    "tag" : "a",
+                    "attributes" : [
+                     {"href": "settings.html"}
+                    ],
+                    "innerText" : "Settings Page"
+                }
+            ]                        
+        }        
+        errorDisplay.throw("Credentials", message);
+
+        return null;
+    },
     updateData: function (dictItem) {
 
         // Get the expiration
@@ -49,7 +100,8 @@ const schedule = {
         // Update the data if it is old             
         if (expiration == null || expiration.getTime() > (new Date()).getTime()) {
             //console.log("data expired get more.");
-            this.get();
+            //this.get();
+            this.post();
             return true;
         }
         return false;
@@ -60,8 +112,7 @@ const schedule = {
         expDate.setMinutes(expDate.getMinutes() + expireMinutes);
         return { "expiration": expDate.toISOString() };
     },
-    mergeData: function (newData, expiration) {
-        //console.log(newData);
+    mergeData: function (newData, expiration) {        
         // iterate through the data and merge it
         Object.keys(newData).forEach(function (key) {
             // set an item expiration on each dict object
@@ -96,7 +147,7 @@ const schedule = {
             sch[(new Date()).toISOString()] = array;
             localStorage.setItem("schedule", JSON.stringify(sch));
 
-            this.get();            
+            this.post();            
         }
         // add the schedule to 
         schedule.data = JSON.parse(localStorage.getItem("schedule"));
@@ -104,9 +155,9 @@ const schedule = {
     loadView: function () {
         // find the daily array objects
         try {
-            if (this.data.hasOwnProperty(this.date.toISOString())) {
+            if (this.data.hasOwnProperty(this.date.toISOString().replace("000Z","00Z"))) {
 
-                var daily = this.data[this.date.toISOString()];
+                var daily = this.data[this.date.toISOString().replace("000Z","00Z")];
 
                 // does the data need to be updated?
                 if (this.updateData(daily)) {
