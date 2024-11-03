@@ -14,7 +14,7 @@ const schedule = {
         // check credentials
         this.credentials = this.getCredentials();
 
-        // Get local
+        // Get local data from storage
         this.getLocal();
 
         // build the html elements from the data and load it.
@@ -43,6 +43,9 @@ const schedule = {
             .then(response => response.json())
             .then(data => {                
                 if ( !data.hasOwnProperty("error") ) {
+                    // 
+                    console.log("data received");
+
                     // set the data expiration                        
                     var expiration = schedule.setExpire();
 
@@ -101,9 +104,12 @@ const schedule = {
         if (expiration == null || expiration.getTime() > (new Date()).getTime()) {
             //console.log("data expired get more.");
             //this.get();
-            this.post();
+            //this.post();
             return true;
         }
+
+        this.post();
+
         return false;
     },
     setExpire: function () {
@@ -130,30 +136,12 @@ const schedule = {
     },
     getLocal: function () {
         // check localStorage for the objects
-        if (!localStorage.hasOwnProperty("schedule")) {
-           
-            var today = {
-                "acivity": "Off (Regular Day Off)",
-                "assignment": "Not checked out",
-                "start date": (new Date()).toISOString(),
-                "end date": (new Date()).toISOString(),
-                "hours": 0
-            }
 
-            var array = [];
-            array.push(today);
-
-            var sch = {};
-            sch[(new Date()).toISOString()] = array;
-            localStorage.setItem("schedule", JSON.stringify(sch));
-
-            this.post();            
-        }
         // add the schedule to 
         schedule.data = JSON.parse(localStorage.getItem("schedule"));
     },
     loadView: function () {
-        // find the daily array objects
+        // find the daily array objects        
         try {
             if (this.data.hasOwnProperty(this.date.toISOString().replace("000Z","00Z"))) {
 
@@ -163,7 +151,8 @@ const schedule = {
                 if (this.updateData(daily)) {
                     console.log("updated");
                 }
-                daily.pop();
+                // this was popping the expiration out of the array. which isn't necessary now
+                //daily.pop();
             }
             else {
                 var daily = null;
@@ -175,8 +164,7 @@ const schedule = {
         }
 
         // load the schedule views                        
-        var block = new Blocks(daily, this.date);
-
+        var block = new Blocks(daily, this.date);        
         // add schedule highlights to the calendar
 
     }

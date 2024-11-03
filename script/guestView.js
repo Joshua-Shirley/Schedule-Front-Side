@@ -7,7 +7,7 @@ class TableMaker {
     table() {
         var obj = {
             "tag": "table",
-            "class": ["table", "table-sm", "table-striped", "sortable"],
+            "class": ["table", "table-sm", "table-striped", "sortable", "table-hover"],
             "children": [this.head(), this.body()]
         }
         return obj;

@@ -51,7 +51,7 @@
       </a>
       <ul class="nav nav-underline">
         <li class="nav-item"><a href="schedule.html" class="nav-link" aria-current="page">Schedule</a></li>
-        <li class="nav-item"><a href="guests.html" class="nav-link active">Guests</a></li>
+        <li class="nav-item"><a href="guests.html" class="nav-link">Guests</a></li>
       </ul>
     </div>
   </header>
@@ -178,8 +178,10 @@
 
         <div class="mb-3">
           <button type="submit" class="btn btn-dark">Save</button>
-        </div>
+          <button type="button" class="btn btn-link" onclick="resetStorage();">Reset</button>
 
+          <button type="button" class="btn btn-dark" onclick="pastSeasons();">Load Past Years</button>
+        </div>
       </form>
 
     </div>
@@ -197,6 +199,11 @@
   </footer>
 
   <script>
+
+    function resetStorage() {
+      localStorage.removeItem("schedule");
+    }
+
     (() => {
       'use strict'
       // Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -228,11 +235,8 @@
       const passNumber = document.getElementById("passNumber");
       const passWord = document.getElementById("password");
       passNumber.addEventListener("change", event => {
-
         passNumber.setCustomValidity("");
-
         if( !passNumber.validity.valid) {
-
           return; 
         }
         validateUser.initiate();
@@ -336,7 +340,7 @@
     loadForm("settings")
   </script>
   <script src="script/validate.js"></script>
-  
+  <script src="script/scheduleFull.js"></script>
 </body>
 
 </html>

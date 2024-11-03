@@ -1,11 +1,12 @@
 const validateUser = {
     // create a lambda function that validates the user
     url : "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/validate",
-    initiate: function() {
+    initiate: function(callback = null) {
         this.credentials = this.getCredentials();
         this.data = this.post();
         // confirm name and resort match
         this.result = false;
+        this.callback = callback;
     },
     updateSettings: function(passed) {
         const settings = JSON.parse(localStorage.getItem("settings"))        
@@ -20,7 +21,11 @@ const validateUser = {
                     if (data["result"] == "pass"){
                         this.result = true;
                         console.log("validation passed") 
-                        this.updateSettings(true);                      
+                        this.updateSettings(true);     
+                        
+                        if(this.callback != null) {
+                            this.callback();
+                        }
                     } 
                     else if (data["result"] == "fail"){
                         console.log("validation failed")

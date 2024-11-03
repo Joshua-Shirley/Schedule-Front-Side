@@ -149,4 +149,13 @@ const Guests = {
     }
 }
 
-Guests.initiate(full);
+const settings = JSON.parse(localStorage.getItem("settings"));
+const thisYear = new Date().getFullYear();
+for(var year = 0; year <= parseInt(settings.seasonRange); year++) {
+    var rollingDate = new Date(thisYear - year, 10, 1);    
+    loadFullSchedule.initiate( rollingDate );    
+}
+
+var fullSchedule = JSON.parse(localStorage.schedule);
+
+Guests.initiate(fullSchedule);

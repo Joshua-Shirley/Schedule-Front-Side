@@ -30,6 +30,7 @@ body {
 
 header, footer {    
     background-color: #500050;
+    background-color: #002450;
 }
 
 header a, a.nav-link {
@@ -47,8 +48,9 @@ a.nav-link:hover {
 }
 
 .accordion-button {
-    /* background-color: #111111; */
-    background-color: #336c13;
+    /* background-color: #111111; 
+    background-color: #336c13;*/
+    background-color: #37464f;
     color: #e6f0ff;
 }
 
@@ -66,8 +68,8 @@ a.nav-link:hover {
 .calendar h2 {    
     font-size: 16px;
     color: #eff5ff;
-    /* background-color: #37464f; */
-    background-color: #336c13;
+    background-color: #37464f; 
+    /*background-color: #336c13;*/
     text-align: center;
     padding: 16px 20px;
 }
