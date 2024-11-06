@@ -30,7 +30,7 @@ body {
 
 header, footer {    
     background-color: #500050;
-    background-color: #002450;
+    background-color: #061e3a;
 }
 
 header a, a.nav-link {
@@ -65,13 +65,17 @@ a.nav-link:hover {
     color: black;
 }
 
+.duration {
+    color: #97ff44;
+}
+
 .calendar h2 {    
     font-size: 16px;
     color: #eff5ff;
     background-color: #37464f; 
     /*background-color: #336c13;*/
     text-align: center;
-    padding: 16px 20px;
+    padding: 4px 20px;
 }
 
 .month-title {
@@ -84,15 +88,12 @@ a.nav-link:hover {
 }
 
 .calendar .btn-dark {
+    /*
     background-color: #9f029f;
     color: #e6ffd5;
     border-color: #9f029f;
-}
-
-.calendar .btn-dark-2 {
-    background-color: #760476;
-    color: #e6ffd5;
-    border-color: #760476;
+    */
+    background-color: #37464f;
 }
 
 .calendar .btn-dark:hover {
@@ -155,9 +156,9 @@ a.nav-link:hover {
     color: white;
 }
 
-.today {
-    background-color: rgb(83, 139, 2);
-    color: white;
+.today:hover,
+.today:active {
+    background-color: rgb(34, 59, 0);
 }
 
 .outer-day {
@@ -165,19 +166,67 @@ a.nav-link:hover {
     color: #636363;
 }
 
+td:has(a.selected) {
+    border-bottom: 3px solid #0f3c74;
+}
+
+ /*
+.selected {   
+    background-color: rgb(49, 84, 1);
+    color:white;   
+} */
+
 .privateRequest {
     background-color: #3f043f;
 }
 
-.selected {
-    background-color: rgb(49, 84, 1);
-    color:white;
+.programDay {
+    background-color: #37464f;    
 }
 
-.today:hover,
-.today:active {
-    background-color: rgb(34, 59, 0);
+#calendarKey table.table-sm td {
+    font-size: 0.8em;
+    height: 30px;
 }
+
+#calendarKey .table-key td:nth-child(1) {    
+    width: 30px;    
+}
+#calendarKey .table-key td:nth-child(2) {    
+    width: auto;   
+}
+
+#calendarKey .table-key a {
+    height: 24px;
+    width: 24px;
+}
+
+td:has( a.today ) {
+    background-color: #ecf3ff;
+    border-radius: 4px;
+}
+
+.today {
+    background-color: rgb(255, 255, 255);
+    color: rgb(4, 4, 4);
+}
+
+select.calendar-select {
+    font-size: 1.2rem;
+    color: white;
+    background-color: #37464f;
+    border: 1px solid #37464f;
+    padding: .375rem;
+    width: 50%;
+    text-align: left;
+}
+
+select.calendar-select:focus-visible {
+    border: 1px solid #37464f;
+    outline: none;
+}
+
+
 
 span.fullName {
     display: none;

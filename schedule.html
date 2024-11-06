@@ -25,29 +25,35 @@
     <script src="script/URLcontroller.js"></script>
     <script>
         const check = new URLControl();
-        if( !check.params.has("date") ){            
+
+        if (!check.params.has("date")) {
             window.location.href = check.link(new Date());
         }
     </script>
     <script src="script/swiper.js"></script>
     <script src="script/htmlbuilder.js"></script>
-    <script src="script/errorView.js?v=1"></script>
+    <script src="script/errorView.js"></script>
+    <script src="script/loadSettings.js"></script>
 
     <script src="script/loadSchedule.js"></script>
-    <script src="script/scheduleBlocks.js?v=1.2"></script>
-    <script src="script/scheduleFetch.js?v=1.2"></script>    
-    <script src="script/calendar.js?v=1.2"></script>
+    <script src="script/scheduleBlocks.js"></script>
+    <script src="script/calendar.js"></script>
 
+    <script>
+        loadFullSchedule.initiate(new Date(check.params.get("date")));
+    </script>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
     <header class="py-3 mb-3 border-bottom">
         <div class="container d-flex flex-wrap justify-content-between">
-            <a href="/index.html" id="title-date" class="align-items-left mb-1 mb-md-0 me-md-auto fs-5" style="padding-top:4px;">
+            <a href="/index.html" id="title-date" class="align-items-left mb-1 mb-md-0 me-md-auto fs-5"
+                style="padding-top:4px;">
                 Ski Gaupo
             </a>
             <ul class="nav nav-underline">
-                <li class="nav-item"><a href="schedule.html" class="nav-link active" aria-current="page">Schedule</a></li>
+                <li class="nav-item"><a href="schedule.html" class="nav-link active" aria-current="page">Schedule</a>
+                </li>
                 <li class="nav-item"><a href="guests.html" class="nav-link">Guests</a></li>
             </ul>
         </div>
@@ -55,11 +61,8 @@
     <main>
         <div class="container-fluid" id="instructor">
             <div class="row headerRow pb-4">
-                <div class="col-12"  class="showDate">
-                </div>
-                <div class="col-12">
-                    Josh Shirley Canyons Village
-                </div>
+                <div class="col-5" id="instructor-name">Joshua Shirley</div>
+                <div class="col-7 text-end" id="instructor-area">PC: Canyons Village</div>
             </div>
         </div>
 
@@ -87,8 +90,9 @@
         </div>
 
         <div class="container">
-            <div class="calendar" id="calendarView">
+            <div class="calendar mb-5" id="calendarView">
                 <div id="calendarHolder"></div>
+                <div id="calendarKey"></div>
             </div>
         </div>
 
@@ -104,8 +108,166 @@
         </ul>
         <p class="fs-0 small text-center text-info pb-0 mb-0">© 2024 Ski Gaupo, Inc</p>
     </footer>
-    <script src="script/schedulePageLoad.js"></script>
-    <script>                      
+    <script>
+        const pageLoad = {
+            data: null,
+            date: new Date(),
+            initiate: function (scheduleObject, date) {
+                // set the page date                                                
+                this.date = date;
+
+                // set the season
+                this.season = (date.getFullYear()) + '-' + (date.getFullYear() + 1);
+                if ( date.getMonth() < 8 ) {
+                    this.season = (date.getFullYear() - 1) + '-' + (date.getFullYear());
+                }
+
+                // GET Date or throw error
+
+                // Check date is within scope
+                const maxDate = new Date(new Date().getFullYear() + 1, 5, 1);
+                if (date > maxDate) {
+                    console.error("Date beyond current scope");
+
+                    this.loadCalendar();
+                    return;
+                }
+
+                // set the title, header
+                this.updatePage();
+
+                // build schedule event blocks
+                this.eventBlock();
+
+                // calendar view
+                this.loadCalendar(date);
+
+                // load calendar dates highlights
+                this.highLightCalendar(date);
+
+                // Swipe controls
+                this.loadSwipe();
+
+            },
+            updatePage: function () {
+                // Update Titles and Date Strings
+                document.querySelector("#title-date").innerText = check.date.toLocaleDateString("default", { weekday: "long", month: "2-digit", day: "2-digit", year: "numeric" });
+
+                // Set inner text 
+                document.querySelector("#instructor-name").innerText = settings.fullName;
+                document.querySelector("#instructor-area").innerText = settings.skiArea;
+            },
+            eventBlock: function () {
+                const key = check.date.toISOString().replace("000Z", "00Z");
+                if (loadFullSchedule.data.hasOwnProperty(key)) {
+                    const daily = loadFullSchedule.data[key];
+                    // load the schedule views                     
+                    var block = new Blocks(daily, this.date);
+                } else {
+                    console.log("Out of scope: ", check.date, check.date.toISOString());
+                }
+            },
+            loadCalendar: function (date) {
+                // Calendar
+                const calendar = new Calendar(date, new URLControl(), loadFullSchedule.data);
+                var calendarView = document.querySelector("#calendarHolder");
+                calendarView.innerHTML = "";
+                calendarView.append(builder(calendar.view()));
+                document.getElementById("calendarKey").append(calendar.Key());
+
+                var season = (date.getFullYear()) + '-' + (date.getFullYear() + 1);
+                if ( date.getMonth() < 8 ) {
+                    season = (date.getFullYear() - 1) + '-' + (date.getFullYear());
+                }
+
+                // Seasons
+                document.querySelector("#calendarSeasons").querySelector("option[value='"+ season + "']").selected = true;
+
+                // Months
+                var monthName = date.toLocaleDateString("default", { "month": "long" });
+                document.querySelector("#calendarMonths").querySelector("option[value='" + monthName + "']").selected = true;
+
+                document.querySelector("#calendarSeasons").addEventListener("change", function () { changeDate() });
+                document.querySelector("#calendarMonths").addEventListener("change", function () { changeDate() });
+            },
+            highLightCalendar: function (date) {
+                const month = date.getMonth();
+                const year = date.getFullYear();
+                const list = Object.keys(loadFullSchedule.data);
+                const days = list.filter((key) => (new Date(key)).getMonth() == month && (new Date(key)).getFullYear() == year);
+                days.forEach(key => {
+                    var activities = loadFullSchedule.data[key];
+                    if (activities.length > 0) {
+                        activities.forEach(activity => {
+                            if (activity.hasOwnProperty("activity")) {
+                                var description = activity["activity"].toLowerCase();
+                                if (!description.includes("regular day off")) {
+                                    try {
+                                        var dateString = (new Date(key)).toLocaleString("default", { month: "2-digit", day: "2-digit", year: "numeric" }).replaceAll("/", "-");
+                                        var targetElement = document.querySelector("a[date='" + dateString + "']");
+                                        targetElement.classList.add("scheduled");
+                                    }
+                                    catch {
+                                        console.log(dateString, " not found");
+                                    }
+
+                                    if (activity["assignment"].toLowerCase().includes("private request")) {
+                                        // private request
+                                        targetElement.classList.add("privateRequest");
+                                    }
+
+                                    if (activity["activity"].toLowerCase().includes("farm")) {
+                                        targetElement.classList.add("programDay");
+                                    }
+                                }
+                            }
+                        })
+                    }
+                });
+            },
+            loadSwipe: function () {
+                // Swiper
+                var assignments = { "right": swipeRight, "left": swipeLeft };
+                // is it possible to constrict to content that is not .calendar
+                swiper.initiate(document.querySelector("div#content"), assignments);
+
+                // assign swiper commands to the calendar block as well.           
+            }
+        }
+        pageLoad.initiate(loadFullSchedule.data, check.date);
+
+        // SWIPE CONTROLS
+        function swipeRight() {
+            var previous = new Date(check.date.setDate(check.date.getDate() - 1));
+            // FIX - change link
+            //window.location.assign("swiper.html?date=" + previous.toISOString());            
+            window.location.assign((new URLControl()).link(previous));
+        }
+
+        function swipeLeft() {
+            var next = new Date(check.date.setDate(check.date.getDate() + 1));
+            // FIX - change link 
+            window.location.assign((new URLControl()).link(next));
+        }
+
+        function changeDate() {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const month = monthNames.indexOf( document.querySelector("#calendarMonths").value );
+            const season = document.querySelector("#calendarSeasons").value;
+            var y = parseInt(season.substring(0,4));
+            const year = month > 7 ? y : y + 1;
+                        
+            try {
+                const date = new Date(year, month, 1);
+                //window.location.assign((new URLControl()).link(date));                                
+                pageLoad.loadCalendar(date);
+                pageLoad.highLightCalendar(date);
+            }
+            catch {
+                console.error("date - wrong format")
+            }
+
+        }
     </script>
 </body>
 

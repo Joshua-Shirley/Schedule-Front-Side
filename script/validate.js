@@ -30,13 +30,17 @@ const validateUser = {
                     else if (data["result"] == "fail"){
                         console.log("validation failed")
                         this.updateSettings(false);
-                    }    
+                    }   
+                    
                     return data;                               
                 }
             })
             .catch(error => {
                 console.error("Error: ", error);
             });
+    },
+    fullSchedule: function() {
+
     },
     getCredentials: function() {
         if( localStorage.getItem("settings") ){   

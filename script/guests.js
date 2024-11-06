@@ -35,7 +35,7 @@ class Guest {
         this.guest_name = new Person(guest);
         this.address = new Address(cityState);
         this.lessons = [];
-        this.hash = this.hashCode( this.head_of_house.full);
+        this.hash = this.hashCode(this.head_of_house.full);
     }
     add(lessons) {
         lessons.forEach(lesson => {
@@ -54,12 +54,12 @@ class Guest {
         let hash = 0;
         if (str.length === 0) return hash;
         for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = (hash << 5) - hash + char;
-          hash |= 0; // Convert to 32bit integer
+            const char = str.charCodeAt(i);
+            hash = (hash << 5) - hash + char;
+            hash |= 0; // Convert to 32bit integer
         }
         return hash;
-      }
+    }
 }
 
 const Guests = {
@@ -75,13 +75,20 @@ const Guests = {
         let private = [];
         Guests.keys.forEach(key => {
             var day = Guests.schedule[key];
-            day.forEach(evt => {
-                if (evt.hasOwnProperty("activity") && evt.hasOwnProperty("assignment")) {
-                    if (evt["activity"].toLowerCase().includes("private")) {
-                        private.push(evt);
+            
+            try {
+                day.forEach(evt => {
+                    if (evt.hasOwnProperty("activity") && evt.hasOwnProperty("assignment")) {
+                        if (evt["activity"].toLowerCase().includes("private")) {
+                            private.push(evt);
+                        }
                     }
-                }
-            });
+                });
+            }
+            catch (error) {
+                console.log( day );
+                console.error(error);
+            }
         });
         return private;
     },
@@ -144,16 +151,16 @@ const Guests = {
                 data.push(rowObj);
             }
         });
-        
-        return data.sort( (a,b) => a["Last"].localeCompare(b["Last"]));
+
+        return data.sort((a, b) => a["Last"].localeCompare(b["Last"]));
     }
 }
 
 const settings = JSON.parse(localStorage.getItem("settings"));
 const thisYear = new Date().getFullYear();
-for(var year = 0; year <= parseInt(settings.seasonRange); year++) {
-    var rollingDate = new Date(thisYear - year, 10, 1);    
-    loadFullSchedule.initiate( rollingDate );    
+for (var year = 0; year <= parseInt(settings.seasonRange); year++) {
+    var rollingDate = new Date(thisYear - year, 10, 1);
+    loadFullSchedule.initiate(rollingDate);
 }
 
 var fullSchedule = JSON.parse(localStorage.schedule);

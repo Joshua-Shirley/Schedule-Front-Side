@@ -11,6 +11,12 @@ const schedule = {
         // set the date for the date view
         this.date = date;
 
+        // set season
+        this.season = (this.date.getFullYear() - 1) + '-' + this.date.getFullYear();
+        if (this.date.getMonth() > 9) {
+            this.season = this.date.getFullYear() + '-' + (this.date.getFullYear() + 1);
+        }
+
         // check credentials
         this.credentials = this.getCredentials();
 
@@ -20,11 +26,11 @@ const schedule = {
         // build the html elements from the data and load it.
         this.loadView();
     },
-    get: function () {        
+    get: function () {
         fetch(this.url)
             .then(response => response.json())
             .then(data => {
-                
+
                 // set the data expiration                        
                 var expiration = schedule.setExpire();
 
@@ -38,11 +44,11 @@ const schedule = {
                 console.error("Error: ", error);
             });
     },
-    post: function() {        
-        fetch(this.url, {method : "POST", body : JSON.stringify(this.credentials), headers : { "Content-Type" : "application/json"} })
+    post: function () {
+        fetch(this.url, { method: "POST", body: JSON.stringify(this.credentials), headers: { "Content-Type": "application/json" } })
             .then(response => response.json())
-            .then(data => {                
-                if ( !data.hasOwnProperty("error") ) {
+            .then(data => {
+                if (!data.hasOwnProperty("error")) {
                     // 
                     console.log("data received");
 
@@ -53,38 +59,40 @@ const schedule = {
                     this.mergeData(data, expiration);
 
                     // callback
-                    this.callback();
+                    if (this.callback != undefined) {
+                        this.callback();
+                    }
                 }
             })
             .catch(error => {
                 console.error("Error: ", error);
             });
     },
-    getCredentials: function() {
-        if( localStorage.getItem("settings") ){   
-            const obj = {};         
+    getCredentials: function () {
+        if (localStorage.getItem("settings")) {
+            const obj = {};
             var settings = JSON.parse(localStorage.getItem("settings"));
             obj["userId"] = settings.passNumber;
             obj["password"] = settings.password;
             obj["date"] = schedule.date.toISOString();
             return obj
         }
-        var message = { 
-            "tag" : "div",
-            "children" : [
+        var message = {
+            "tag": "div",
+            "children": [
                 {
-                    "tag" : "p",
-                    "innerText" : "Invalid Credentials - Add valid credentials on the settings page."
+                    "tag": "p",
+                    "innerText": "Invalid Credentials - Add valid credentials on the settings page."
                 },
                 {
-                    "tag" : "a",
-                    "attributes" : [
-                     {"href": "settings.html"}
+                    "tag": "a",
+                    "attributes": [
+                        { "href": "settings.html" }
                     ],
-                    "innerText" : "Settings Page"
+                    "innerText": "Settings Page"
                 }
-            ]                        
-        }        
+            ]
+        }
         errorDisplay.throw("Credentials", message);
 
         return null;
@@ -113,16 +121,16 @@ const schedule = {
         return false;
     },
     setExpire: function () {
-        var expireMinutes = 5;        
+        var expireMinutes = 5;
         var expDate = new Date();
         expDate.setMinutes(expDate.getMinutes() + expireMinutes);
         return { "expiration": expDate.toISOString() };
     },
-    mergeData: function (newData, expiration) {        
+    mergeData: function (newData, expiration) {
         // iterate through the data and merge it
         Object.keys(newData).forEach(function (key) {
             // set an item expiration on each dict object
-            newData[key].push(expiration);
+            //newData[key].push(expiration);
 
             // over write each date
             schedule.data[key] = newData[key];
@@ -143,9 +151,9 @@ const schedule = {
     loadView: function () {
         // find the daily array objects        
         try {
-            if (this.data.hasOwnProperty(this.date.toISOString().replace("000Z","00Z"))) {
+            if (this.data.hasOwnProperty(this.date.toISOString().replace("000Z", "00Z"))) {
 
-                var daily = this.data[this.date.toISOString().replace("000Z","00Z")];
+                var daily = this.data[this.date.toISOString().replace("000Z", "00Z")];
 
                 // does the data need to be updated?
                 if (this.updateData(daily)) {
@@ -163,9 +171,9 @@ const schedule = {
             return;
         }
 
-        // load the schedule views                        
-        var block = new Blocks(daily, this.date);        
-        // add schedule highlights to the calendar
+        // load the schedule views                     
+        var block = new Blocks(daily, this.date);
 
+        // add schedule highlights to the calendar
     }
 }

@@ -40,6 +40,8 @@
   <script src="script/swiper.js"></script>
   <script src="script/htmlbuilder.js"></script>
   <script src="script/errorView.js?v=1"></script>
+  <script src="script/loadSettings.js"></script>
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -61,7 +63,7 @@
         <div class="col-12" class="showDate">
         </div>
         <div class="col-12">
-          Josh Shirley Canyons Village
+          Welcome New Instructor
         </div>
       </div>
     </div>
@@ -179,12 +181,38 @@
         <div class="mb-3">
           <button type="submit" class="btn btn-dark">Save</button>
           <button type="button" class="btn btn-link" onclick="resetStorage();">Reset</button>
-
-          <button type="button" class="btn btn-dark" onclick="pastSeasons();">Load Past Years</button>
+         
+          <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#setupModal">
+            Import Schedule
+          </button>
         </div>
       </form>
 
     </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="setupModal" tabindex="-1" aria-labelledby="setupModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="setupModalLabel">Fetch All Seasons</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="setupMessages">
+            <p class="small">Please be patient while we collect your schedule history.</p>
+            <p class="small">Expect about 5-15 seconds per season.</p>            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-dark" onclick="allSeasons.initiate();">Start</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>            
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
   </main>
   <footer class="mt-auto py-3 my-0">
     <div class="d-flex flex-wrap justify-content-center">
@@ -201,7 +229,10 @@
   <script>
 
     function resetStorage() {
+      let result = confirm("Reset All");
       localStorage.removeItem("schedule");
+      localStorage.removeItem("settings");
+      location.reload();
     }
 
     (() => {
@@ -236,8 +267,8 @@
       const passWord = document.getElementById("password");
       passNumber.addEventListener("change", event => {
         passNumber.setCustomValidity("");
-        if( !passNumber.validity.valid) {
-          return; 
+        if (!passNumber.validity.valid) {
+          return;
         }
         validateUser.initiate();
       }, false);
@@ -340,7 +371,9 @@
     loadForm("settings")
   </script>
   <script src="script/validate.js"></script>
-  <script src="script/scheduleFull.js"></script>
+
+  <script src="script/setupSchedule.js"></script>
+
 </body>
 
 </html>

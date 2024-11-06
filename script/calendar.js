@@ -1,5 +1,5 @@
 class Calendar {
-    constructor(date, urlController, schedule) {
+    constructor(date, urlController, scheduleObject) {
         this.linkGenerator = urlController;
         if (!date) {
             var date = new Date();
@@ -9,19 +9,6 @@ class Calendar {
         this.month = date.getMonth();
         this.list = [];
         this.loadList(this.entryDate);
-        
-        // load scheduled dates
-        if(schedule instanceof Object) {
-            this.schedule = this.includeSchedule();
-        }
-    }
-    includeSchedule() {
-        // load the schedule
-        const list = Object.keys(schedule.data);
-        const keys = list.filter((key) => (new Date(key)).getMonth() == this.month);
-        // month
-
-        // 
     }
     loadList(date) {
         // first day of the month
@@ -54,11 +41,11 @@ class Calendar {
         }
         return date;
     }
-    linkBuilder(date) { 
-        if( date instanceof Date) {           
+    linkBuilder(date) {
+        if (date instanceof Date) {
             return this.linkGenerator.link(date);
         } else {
-            throw error (date, " is not a DateTime object.");
+            throw error(date, " is not a DateTime object.");
         }
     }
     view() {
@@ -66,90 +53,190 @@ class Calendar {
         parts.push(this.monthHeader());
         parts.push(this.tableMonth());
         parts.push(this.footer());
-        var html = {            
+        var html = {
             "tag": "div",
-            "class" : ["calendar", "mb-5"],
+            "class": ["calendar"],
             "id": "calendarView",
-            "children": parts
+            "children": [
+                {
+                    "tag": "form",
+                    "id" : "calendarForm",
+                    "children" : parts
+                }
+            ]            
         };
         return html;
     }
+
+    selectYear() {
+        var yearOptions = [];
+        const seasons = [ "2024-2025" ]
+        for(var index = 0; index <= parseInt( settings.seasonRange ); index++) {
+            var year = (new Date().getFullYear() + 1) - index;
+            var option = {
+                "tag": "option",
+                "attributes": [
+                    { "value": year.toString() }
+                ],
+                "innerText" : year.toString()
+            } 
+            yearOptions.push(option);
+        }
+        var select = {
+            "tag" : "select",
+            "class" : ["calendar-select"],
+            "id" : "calendarYears",
+            "attributes" : [
+                { "aria-label": "Default select"}
+            ],
+            "children": yearOptions
+        }
+        return select;
+    }
+
+    selectSeason() {
+        var seasons = [];
+        const year = new Date().getFullYear();
+        for(var index = 0; index <= parseInt(settings.seasonRange); index++) {
+            var sYear = year - index;
+            var season = (sYear) + '-' + (sYear + 1);
+            seasons.push(season);
+        }
+        var options = [];
+        while(seasons.length > 0) {
+            var s = seasons.shift();
+            var option = {
+                "tag": "option",
+                "attributes": [
+                    { "value": s }
+                ],
+                "innerText" : s
+            } 
+            options.push(option);
+        }
+        var select = {
+            "tag" : "select",
+            "class" : ["calendar-select"],
+            "id" : "calendarSeasons",
+            "attributes" : [
+                { "aria-label": "Default select"}
+            ],
+            "children": options
+        }
+        return select;
+    }
+
+    selectMonth() {
+        var monthOptions = [];
+        const monthNames = [ "November", "December", "January", "February", "March","April" ];
+        for( var index = 0; index < monthNames.length; index++) {
+            var option = {
+                "tag": "option",
+                "attributes": [
+                    {"value": monthNames[index] }
+                ],
+                "innerText": monthNames[index]
+            }
+            monthOptions.push(option);
+        }
+        var select = {
+            "tag": "select",
+            "class": ["calendar-select"],
+            "id": "calendarMonths",
+            "attributes" : [
+                {"aria-label": "Default select"}
+            ],
+            "children": monthOptions
+        }
+        return select;
+    }
+
     footer() {
-        var previousMonth = new Date(this.entryDate.getFullYear(), this.entryDate.getMonth() -1 , 1);
+        var previousMonth = new Date(this.entryDate.getFullYear(), this.entryDate.getMonth() - 1, 1);
         var nextMonth = new Date(this.entryDate.getFullYear(), this.entryDate.getMonth() + 1, 1);
         var div = {
-            "tag" : "div",            
-            "class" : ["row", "align-items-start", "text-center"],
-            "children" : [
+            "tag": "div",
+            "class": ["row", "align-items-start", "text-center"],
+            "children": [                
                 {
                     "tag": "div",
-                    "class": ["col"],
-                    "children" : [
+                    "class": ["col-4"],
+                    "children": [
                         {
                             "tag": "a",
-                            "class" : ["btn","btn-dark"],
+                            "class": ["btn", "btn-dark"],
                             "innerText": previousMonth.toLocaleDateString("default", { month: "long" }),
                             "attributes": [
-                                {                                     
-                                    "href" : this.linkBuilder(previousMonth),
+                                {
+                                    "href": this.linkBuilder(previousMonth),
                                 }
                             ]
                         },
                     ]
                 },
+
                 {
                     "tag": "div",
-                    "class": ["col"],
-                    "children" : [                        
+                    "class": ["col-4"],
+                    "children": [
                         {
-                            "tag" : "a",
-                            "class" : ["btn", "btn-dark-2"],
-                            "attributes" : [
+                            "tag": "a",
+                            "class": ["btn", "btn-dark"],
+                            "attributes": [
                                 {
-                                    "href" : this.linkBuilder(new Date()),
+                                    "href": this.linkBuilder(new Date()),
                                 }
                             ],
-                            "innerText" : "Today"
+                            "innerText": "Today"
                         }
-                    ]                    
+                    ]
                 },
                 {
                     "tag": "div",
-                    "class": ["col"],
-                    "children" : [
+                    "class": ["col-4"],
+                    "children": [
                         {
                             "tag": "a",
-                            "class" : ["btn","btn-dark"],
+                            "class": ["btn", "btn-dark"],
                             "innerText": nextMonth.toLocaleDateString("default", { month: "long" }),
                             "attributes": [
-                                {                                     
-                                    "href" : this.linkBuilder(nextMonth),
+                                {
+                                    "href": this.linkBuilder(nextMonth),
                                 }
                             ]
                         }
                     ]
                 }
-            ],            
+            ],
         }
         return div;
     }
-    monthHeader() {        
+
+    monthHeader() {
+        var header = {
+            "tag" : "h2",
+            "children": [ this.selectSeason() , this.selectMonth() ],              
+        }
+        return header;
+    }
+
+    monthHeader2() {
         var header = {
             "tag": "h2",
-            "children" : [
+            "children": [
                 {
                     "tag": "div",
-                    "class": ["d-flex","justify-content-center"],
-                    "children" : [
+                    "class": ["d-flex", "justify-content-center"],
+                    "children": [
 
                         {
                             "tag": "span",
-                            "class" : ["month-title"],
+                            "class": ["month-title"],
                             "innerText": this.entryDate.toLocaleDateString("default", { month: "long", year: "numeric" }),
                         }
                     ]
                 }
-            ]            
+            ]
         }
         return header;
     }
@@ -175,17 +262,17 @@ class Calendar {
         for (var index = 0; index < 7; index++) {
             var dayName = this.list[index].toLocaleString("default", { weekday: "long" })
             var th = {
-                "tag": "th", 
+                "tag": "th",
                 "children": [
                     {
                         "tag": "span",
                         "class": "abbreviation",
-                        "innerText" : dayName.substring(0,3)
+                        "innerText": dayName.substring(0, 3)
                     },
                     {
                         "tag": "span",
                         "class": "fullName",
-                        "innerText" : dayName
+                        "innerText": dayName
                     }
                 ]
             }
@@ -230,11 +317,11 @@ class Calendar {
         }
 
         // highlight the entry date
-        if (date.compareDate(this.entryDate)){
+        if (date.compareDate(this.entryDate)) {
             classes.push("selected");
         }
 
-        var dateString = date.toLocaleString("default", { month: "2-digit", day: "2-digit", year: "numeric"}).replaceAll("/","-");
+        var dateString = date.toLocaleString("default", { month: "2-digit", day: "2-digit", year: "numeric" }).replaceAll("/", "-");
         var cell = {
             "tag": "td",
             "children": [
@@ -243,7 +330,7 @@ class Calendar {
                     "class": classes,
                     "attributes": [
                         {
-                            "date": dateString,                            
+                            "date": dateString,
                             "href": this.linkBuilder(date),
                         }
                     ],
@@ -252,6 +339,89 @@ class Calendar {
             ]
         }
         return cell;
+    }
+    Key() {
+        var keyArray = [
+            { "text": "Today", "class": "today" },
+            { "text": "Scheduled Work Day", "class": "scheduled" },
+            { "text": "Private Request", "class": "privateRequest" },
+            { "text": "Local Program", "class": "programDay" },
+            { "text": "Selected Date", "class": "selected" }
+        ]
+
+        var button = {
+            "tag": "button",
+            "class": ["btn", "btn-link"],
+            "attributes": [
+                { "type": "button" },
+                { "data-bs-toggle": "collapse" },
+                { "data-bs-target": "#calendarKey" },
+                { "aria-expanded": "false" },
+                { "aria-controls": "calendarKey" }
+            ],
+            "innerText": "Calendar Key"
+        }
+
+        var rows = [];
+        keyArray.forEach(key => {
+            var row = {
+                "tag": "tr",
+                "children": [
+                    {
+                        "tag": "td",
+                        "class": ["text-end"],
+                        "children": [
+                            {
+                                "tag": "a",
+                                "class": ["calendar-day", key.class]
+                            }
+                        ]
+                    },
+                    {
+                        "tag": "td",
+                        "class": ["text-start"],
+                        "innerText": key.text
+                    }
+                ]
+            }
+            rows.push(row);
+        });
+        var key = {
+            "tag": "div",
+            "class": ["table-key"],
+            "children": [
+                {
+                    "tag": "button",
+                    "class": ["btn", "btn-link","mb-3"],
+                    "attributes": [
+                        { "type": "button" },
+                        { "data-bs-toggle": "collapse" },
+                        { "data-bs-target": "#keyView" },
+                        { "aria-expanded": "false" },
+                        { "aria-controls": "keyView" }
+                    ],
+                    "innerText": "Calendar Key"
+                },
+                {
+                    "tag": "div",
+                    "class": ["collapse", "text-center"],
+                    "id" : "keyView",
+                    "children" : [
+                        {
+                            "tag": "table",
+                            "class": ["table", "table-sm", "table-borderless"],
+                            "children": [
+                                {
+                                    "tag": "tbody",
+                                    "children": rows
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+        return builder(key);
     }
 }
 
@@ -273,8 +443,8 @@ Date.prototype.compareDate = function (dateB) {
     return false;
 };
 
-String.prototype.toProperCase = function() {
+String.prototype.toProperCase = function () {
     return this.toLowerCase().split(' ').map(word => {
         return word.charAt(0).toUpperCase() + word.slice(1);
-      }).join(' ');    
+    }).join(' ');
 }

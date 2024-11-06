@@ -139,7 +139,7 @@ class Blocks {
                         "children": [
                             {
                                 "tag": "div",
-                                "class": ["col", "text-start"],
+                                "class": ["col", "text-start", "duration"],
                                 "attributes": [
                                     { "data-type": "start-end" }
                                 ],
@@ -147,7 +147,7 @@ class Blocks {
                             },
                             {
                                 "tag": "div",
-                                "class": ["col", "text-end"],
+                                "class": ["col", "text-end", "assignment"],
                                 "attributes": [
                                     { "data-type": "assignment" }
                                 ],

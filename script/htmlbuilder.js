@@ -22,9 +22,14 @@ function builder(obj) {
     if (obj.hasOwnProperty("attributes")){
         if(Array.isArray(obj["attributes"])){
             obj["attributes"].forEach(child => {                 
-                const keys = Object.keys(child);
+                const keys = Object.keys(child);                
                 keys.forEach( key => {
-                    block.setAttribute(key, child[key]);
+                    if ( key == "selected" && child[key] == true) {
+                        console.log( key , "selected")
+                        block.selected = true;
+                    } else {
+                        block.setAttribute(key, child[key]);
+                    }
                 });
             });               
         }
