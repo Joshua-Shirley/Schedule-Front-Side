@@ -173,8 +173,11 @@
                 var calendarView = document.querySelector("#calendarHolder");
                 calendarView.innerHTML = "";
                 calendarView.append(builder(calendar.view()));
+                
+                document.getElementById("calendarKey").innerHTML = "";
                 document.getElementById("calendarKey").append(calendar.Key());
-
+                
+                
                 var season = (date.getFullYear()) + '-' + (date.getFullYear() + 1);
                 if ( date.getMonth() < 8 ) {
                     season = (date.getFullYear() - 1) + '-' + (date.getFullYear());
