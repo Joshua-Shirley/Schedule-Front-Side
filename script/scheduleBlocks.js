@@ -247,6 +247,7 @@ class Blocks {
         }
         div.children.push(link);
         div.children.push(tableHolder);
+        
         return div;
     }
     administrativeBlock(obj) {
@@ -296,6 +297,19 @@ class Blocks {
         return div;        
     }
     dataTable(obj, keys, className) {
+        function guestLink(value) {
+            const param = new URLSearchParams();
+            param.append("name", value);
+            var link = {
+                "tag" : "a",
+                "attributes" : [
+                    {"href" : "guests.html?" + param.toString()}
+                ],
+                "innerText": value
+            }
+            return link;
+        }
+
         function rowObj(key, value) {
             var row = {
                 "tag" : "tr",
@@ -308,11 +322,15 @@ class Blocks {
                         "tag" : "td",
                         "attributes" : [
                             { "data-key" : key }
-                        ],
-                        "innerText" : value
+                        ]                        
                     }
                 ]
             } 
+            if (key == "Client Name") {
+                row.children[1].children = [ guestLink(value) ];
+            } else {
+                row.children[1].innerText = value;
+            }
             return row;          
         }    
         

@@ -18,6 +18,12 @@ class URLControl {
         }
     }
 
+    scheduleLink(date = this.date) {
+        const params = new URLSearchParams();
+        params.append("data", this.zeroDate(date).toISOString());                
+        return "schedule.html?" + params;
+    }
+
     link(date = this.date) {
         if ( date instanceof Date) {
             const param = new URLSearchParams();
@@ -31,5 +37,15 @@ class URLControl {
 
     zeroDate(date) {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate() );
+    }
+
+    guestLink() {    
+        const guest = Guests.list[guestHash];
+        const path = "guests.html"
+        const params = new URLSearchParams();
+        params.append("name", guest.head_of_house.full)
+        const url = new URL(window.location.href);
+        url.search = params;
+        window.location.href = url.toString();        
     }
 }

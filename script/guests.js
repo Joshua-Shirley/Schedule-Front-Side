@@ -10,6 +10,17 @@ class Person {
         this.first = nameArray[0].trim();
         this.last = nameArray[1].trim();
     }
+    addAge(age) {
+        this.age = age;
+    }
+    addGender(gender) {
+        if (gender.toLowerCase() == "male") {
+            this.gender = "male";
+        }
+        else if (gender.toLowerCase() == "female") {
+            this.gender = "female";
+        }
+    }
 }
 
 class Address {
@@ -35,12 +46,16 @@ class Guest {
         this.guest_name = new Person(guest);
         this.address = new Address(cityState);
         this.lessons = [];
+        this.people = [];
         this.hash = this.hashCode(this.head_of_house.full);
     }
     add(lessons) {
         lessons.forEach(lesson => {
             this.lessons.push(lesson);
         });
+    }
+    people(person) {
+        this.people.push(person);
     }
     toDict() {
         const dict = {};
@@ -70,12 +85,13 @@ const Guests = {
         this.privateLessons = this.populateLessons();
         this.populateGuests();
         this.matchLessons();
+        this.nameDict = this.nameReference();
     },
     populateLessons: function () {
         let private = [];
         Guests.keys.forEach(key => {
             var day = Guests.schedule[key];
-            
+
             try {
                 day.forEach(evt => {
                     if (evt.hasOwnProperty("activity") && evt.hasOwnProperty("assignment")) {
@@ -86,7 +102,7 @@ const Guests = {
                 });
             }
             catch (error) {
-                console.log( day );
+                console.log(day);
                 console.error(error);
             }
         });
@@ -96,7 +112,8 @@ const Guests = {
         Guests.privateLessons.forEach(lesson => {
             if (lesson.hasOwnProperty("client name")) {
                 var guest = new Guest(lesson["client name"], lesson["guest name"], lesson["city, state"]);
-                var hash = lesson["client name"];
+                //var hash = lesson["client name"];
+                var hash = guest["hash"]
                 try {
                     Guests.list[hash] = guest;
                 }
@@ -107,22 +124,21 @@ const Guests = {
         });
     },
     matchLessons: function () {
-        Object.keys(Guests.list).forEach(name => {
-            Guests.list[name].add(Guests.pastLessons(name));
+        Object.keys(Guests.list).forEach(hash => {
+            //Guests.list[name].add(Guests.pastLessons(name));
+            var guest = Guests.list[hash];
+            Guests.list[hash].add(Guests.pastLessons(guest));
         });
     },
     pastLessons: function (guest) {
         const lessons = [];
-        Guests.keys.forEach(key => {
-            var day = Guests.schedule[key];
-            day.forEach(evt => {
-                if (evt.hasOwnProperty("client name")) {
-                    if (evt["client name"] == guest) {
-                        lessons.push(evt);
-                    }
-                }
-            });
+
+        Guests.privateLessons.forEach(private => {
+            if (private["client name"] == guest["head_of_house"]["full"]) {
+                lessons.push(private);
+            }
         });
+
         return lessons;
     },
     tableDisplayData: function () {
@@ -136,16 +152,24 @@ const Guests = {
                     "First": guest["head_of_house"]["first"]
                 }
                 if (guest["address"] != undefined) {
-                    if (guest["address"]["city"] != undefined) {
-                        rowObj["City"] = guest["address"]["city"];
+                    // if (guest["address"]["city"] != undefined) {
+                    //     rowObj["City"] = guest["address"]["city"];
+                    // }
+                    // if (guest["address"]["state"] != undefined) {
+                    //     rowObj["State"] = guest["address"]["state"];
+                    // }
+                    // else {
+                    //     rowObj["City"] = "";
+                    //     rowObj["State"] = "";
+                    // } 
+                    if (guest.address.full != undefined) {
+                        rowObj["Residence"] = guest.address.full;
+                    } else {
+                        rowObj["Residence"] = "";
                     }
-                    if (guest["address"]["state"] != undefined) {
-                        rowObj["State"] = guest["address"]["state"];
-                    }
-                    else {
-                        rowObj["City"] = "";
-                        rowObj["State"] = "";
-                    }
+
+                } else {
+                    rowObj["Residence"] = "";
                 }
 
                 data.push(rowObj);
@@ -153,16 +177,16 @@ const Guests = {
         });
 
         return data.sort((a, b) => a["Last"].localeCompare(b["Last"]));
+    },
+    nameReference: function () {
+        var names = {};
+        Object.keys(Guests.list).forEach(hash => {
+            var guest = Guests.list[hash];
+            names[guest.head_of_house.full] = guest.hash;
+        });
+        return names;
     }
 }
 
-const settings = JSON.parse(localStorage.getItem("settings"));
-const thisYear = new Date().getFullYear();
-for (var year = 0; year <= parseInt(settings.seasonRange); year++) {
-    var rollingDate = new Date(thisYear - year, 10, 1);
-    loadFullSchedule.initiate(rollingDate);
-}
-
-var fullSchedule = JSON.parse(localStorage.schedule);
-
-Guests.initiate(fullSchedule);
+loadFullSchedule.initiate(new Date());
+Guests.initiate(loadFullSchedule.data);

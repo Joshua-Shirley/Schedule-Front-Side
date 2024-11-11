@@ -47,7 +47,11 @@ class TableMaker {
     headerRow() {
         let cells = [];
         this.keys.forEach(key => {
-            cells.push(this.cellTH(key));
+            if( key == "button") {
+                cells.push( this.cellTH("") );
+            } else {
+                cells.push( this.cellTH(key) );
+            }
         });
         return this.row(cells);
     }
@@ -70,7 +74,11 @@ class TableMaker {
             var cells = []
             this.keys.forEach(key => {
                 // create a TD object for each key match
-                cells.push(this.cellTD(row[key]))
+                if( key == "button") {
+                    cells.push( this.cellWithObj( this.button(row['Link'] )) )
+                } else {
+                    cells.push( this.cellTD(row[key]) )
+                }
             });
             rows.push(this.row(cells, row["Link"]));
         });
@@ -84,6 +92,26 @@ class TableMaker {
         }
         return obj
     }
+
+    cellWithObj(innerHTML) {
+        var cell = {
+            "tag": "td",
+            "children": [ innerHTML ]                        
+        }
+        return cell;
+    }
+
+    button(hash) {
+        var obj = {
+            "tag" : "button",
+            "class" : ["btn", "btn-dark"],            
+            "attributes" : [
+                { "value" : hash }
+            ],
+            "innerText" : "View"
+        }
+        return obj;
+    }
 }
 
 const guestTable = {
@@ -96,7 +124,8 @@ const guestTable = {
         this.table = document.querySelector("table.sortable");
     },
     loadView: function () {
-        const keys = ["Last", "First", "City", "State"];
+        //const keys = ["Last", "First", "City", "State", "button"];
+        const keys = ["Last", "First", "Residence", "button"];
         const table = new TableMaker(this.data, keys);
         document.getElementById("tableholder").append(builder(table.table()));
     },
@@ -115,11 +144,18 @@ const guestTable = {
 
         const filterData = sortTable.querySelectorAll("tbody td");
         filterData.forEach(cell => {
-            cell.addEventListener("dblclick", (event) => { guestTable.guestInformation(cell.parentElement.getAttribute("rowid")) });
+            //cell.addEventListener("dblclick", (event) => { guestTable.guestInformation(cell.parentElement.getAttribute("rowid")) });
             // set up a touch hold (1 second +) event 
             // touchend - touchstart > 1 second
-            //cell.addEventListener("touchend", (event) => { guestTable.guestInformation(cell.innerText) });
-        })
+            //cell.addEventListener("touchend", (event) => { guestTable.guestInformation(cell.parentElement.getAttribute("rowid")) });
+        });
+
+        const viewButtons = sortTable.querySelectorAll("button");
+        viewButtons.forEach( button => {
+            button.addEventListener("click", (event) => {
+                guestTable.guestInformation( button.value );
+            });
+        });
     },
     searchTable: function(value) {
         var sorted = guestTable.data.filter( guest => guest.Last.toLowerCase().includes(value.toLowerCase()) || guest.First.toLowerCase().includes(value.toLowerCase()) );     
@@ -142,9 +178,16 @@ const guestTable = {
         console.log(columnText);
     },
     guestInformation: function(guestHash) {
-        console.log(guestHash);
+        const guest = Guests.list[guestHash];
+        const path = "guests.html"
+        const params = new URLSearchParams();
+        params.append("name", guest.head_of_house.full)
+        const url = new URL(window.location.href);
+        url.search = params;
+        window.location.href = url.toString();
     }
 
 }
 
 guestTable.initiate();
+
