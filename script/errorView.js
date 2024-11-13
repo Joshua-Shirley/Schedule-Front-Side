@@ -25,13 +25,14 @@ class ErrorDisplay {
         document.head.appendChild(style);
 
         var css = [];
-        css.push("#error { background-color: mistyrose; color: black; border: 1px solid red; padding: 6px 12px; border-radius: 3px; margin: 10px 10px 30px 10px; }");
+        css.push("/* generated from errorView.js */");
+        css.push("#error { \n\tbackground-color: mistyrose;\n\tcolor: black;\n\tborder: 1px solid red;\n\tpadding: 6px 12px;\n\tborder-radius: 3px;\n\tmargin: 10px 10px 30px 10px;\n}\n");
         css.push("#error .header {font-size: 1.4em;}");
         css.push("#error .footer { text-align: right; }");
         css.push("#error .returnLink { display: inline-block; }");
         css.push("#error .btn {text-decoration: none; color: white; background-color: #1067ab; padding: 6px 12px; border: 1px solid blue; border-radius: 3px; font-size: 14px; line-height: 1.4em;margin: 0 0 1.2em 0;    display: inline-block;}");
 
-        style.append(css.join(""));
+        style.append(css.join("\n"));
     }
     bubbleError(obj) {
         //console.log( typeof obj.message );        
