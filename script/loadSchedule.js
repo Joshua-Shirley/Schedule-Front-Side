@@ -12,8 +12,8 @@ const loadFullSchedule = {
             return;
         }
 
-        // credentials
-        this.credentials = this.getCredentials();
+        // credentials        
+        this.credentials = settings.credentials(this.date);
 
         // localStorage to object data
         if (localStorage.schedule == undefined) {
@@ -42,8 +42,6 @@ const loadFullSchedule = {
         if( this.season == "2024-2025" ) {            
             this.test();
         }
-
-        //console.log("complete");
     },
     test: function () {
         function getMinutesDifference(date1, date2) {
@@ -55,7 +53,7 @@ const loadFullSchedule = {
         var lastModified = null;
         // get the doc head to see if 
         try {
-            var settings = JSON.parse(localStorage.getItem("settings"));
+            //var settings = JSON.parse(localStorage.getItem("settings"));
             var url = this.bucket + "data/" + settings.passNumber + "/" + this.season + ".json";
 
             //console.log("test lastmodifieddate: ", url)
@@ -64,9 +62,7 @@ const loadFullSchedule = {
                 .then(response => {           
                     
                     var lastModified = new Date(response.headers.get("Last-Modified"));
-
-                    //console.log("Head Response: ", url);
-
+                    
                     var minutesElapsed = getMinutesDifference(lastModified, new Date());
                     if (minutesElapsed > 30) {
                         this.post();
@@ -91,8 +87,7 @@ const loadFullSchedule = {
             });
     },
     post: function () {
-        const lambda = "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/daily";
-        this.credentials = this.getCredentials();
+        const lambda = "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/daily";        
         fetch(lambda, { method: "POST", body: JSON.stringify(this.credentials), headers: { "Content-Type": "application/json" } })
             .then(response => response.json())
             .then(data => {
@@ -105,44 +100,18 @@ const loadFullSchedule = {
             .catch(error => {
                 console.error("Error: ", error);
             });
-    },
-    getCredentials: function () {
-        if (localStorage.getItem("settings")) {
-            const obj = {};
-            var settings = JSON.parse(localStorage.getItem("settings"));
-            obj["userId"] = settings.passNumber;
-            obj["password"] = settings.password;
-            obj["date"] = this.date.toISOString();
-            return obj
-        }
-        var message = {
-            "tag": "div",
-            "children": [
-                {
-                    "tag": "p",
-                    "innerText": "Invalid Credentials - Add valid credentials on the settings page."
-                },
-                {
-                    "tag": "a",
-                    "attributes": [
-                        { "href": "settings.html" }
-                    ],
-                    "innerText": "Settings Page"
-                }
-            ]
-        }
-        errorDisplay.throw("Credentials", message);
-
-        return null;
-    },        
-    getURL: function () {
-        var settings = JSON.parse(localStorage.getItem("settings"));
+    },     
+    getURL: function () {        
         return this.bucket + "data/" + settings.passNumber + "/" + this.season + ".json";
     },
     mergeSchedule: function (incoming) {        
         if (incoming != null) {
             Object.keys(incoming).forEach(key => {
-                this.data[key] = incoming[key];
+                var keyDate = new Date(key);
+                var date = new Date(keyDate.getFullYear(), keyDate.getMonth(), keyDate.getDate());
+                //console.log(date)
+                //this.data[date.toLocaleDateString()] = incoming[key];
+                this.data[date.toISOString()] = incoming[key];
             });
             this.saveSchedule();
         }
@@ -150,5 +119,4 @@ const loadFullSchedule = {
     saveSchedule: function () {
         localStorage.setItem("schedule", JSON.stringify(this.data));
     }
-
 }

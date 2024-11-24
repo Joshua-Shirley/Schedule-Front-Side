@@ -37,6 +37,14 @@ class Blocks {
     }
     loadContainer(obj) {
         this.clearContainer();
+
+        var header = {
+            "tag" : "h3",
+            "class" : ["pb-3"],
+            "innerText" : this.date.toLocaleDateString("default", { weekday: "long", month: "2-digit", day: "2-digit", year: "numeric" })
+        }
+
+        this.container.append(builder(header));
         this.container.append(builder(obj));
     }
     blankDay() {

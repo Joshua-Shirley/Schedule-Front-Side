@@ -77,10 +77,11 @@ function thisPage() {
 
 function calendarSchedule(monthNumber, year) {
     // load the schedule
-    const list = Object.keys(schedule.data);
+    const list = Object.keys(loadFullSchedule.data);
     const keys = list.filter((key) => (new Date(key)).getMonth() == monthNumber && new Date(key).getFullYear() == year);
+    console.log(keys);
     keys.forEach(key => {
-        var activities = schedule.data[key];
+        var activities = loadFullSchedule.data[key];
         if (activities.length > 0) {
             activities.forEach(activity => {
                 if (activity.hasOwnProperty("activity")) {

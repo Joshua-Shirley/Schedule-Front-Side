@@ -177,9 +177,10 @@ class Accordion {
     }
 
     scheduleLink( scheduleDate ) {
+        let date = new Date( scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate() );
         const params = new URLSearchParams();
-        params.append("date", scheduleDate.toISOString()); 
-        var href = "schedule.html?" + params.toString();
+        params.append("date", date.toISOString()); 
+        var href = "schedule-v2.html?" + params.toString();
         var link = {
             "tag" : "a",
             "class" : [ "link" ],

@@ -43,15 +43,12 @@ const seasonSchedule = {
             .catch(error => {
                 console.error("Error: ", error);
             });
+    },
+    all: function() {
+        var rollingYear = new Date().getFullYear() - settings.seasonRange;
+        while( rollingYear <= new Date().getFullYear()){            
+            seasonSchedule.initiate( settings.passNumber, settings.password, new Date(rollingYear,12,1) );
+            rollingYear++;
+        } 
     }
-}
-
-function pastSeasons() {
-    const settings = JSON.parse(localStorage.getItem("settings"));
-    var rollingYear = new Date().getFullYear() - parseInt(document.querySelector("input#seasonRange").value);
-    while( rollingYear < new Date().getFullYear()){
-        console.log(rollingYear);
-        seasonSchedule.initiate( settings.passNumber, settings.password, new Date(rollingYear,12,1) );
-        rollingYear++;
-    }    
 }

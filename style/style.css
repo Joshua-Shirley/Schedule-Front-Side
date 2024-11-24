@@ -11,6 +11,10 @@ body {
     max-width: 640px;
 }
 
+.hide {
+    display: none;
+}
+
 .btn-danger {
     --bs-btn-color: #fff;
     --bs-btn-bg: #9b2022;
@@ -47,22 +51,24 @@ a.nav-link:hover {
     color: yellowgreen;
 }
 
-.accordion-button {
-    /* 
-    background-color: #111111; 
-    background-color: #336c13;
+.accordion-button {    
     background-color: #37464f;
-    color: #e6f0ff;
-    */
+    color: #e6f0ff;  
 }
 
 .accordion-button:not(.collapsed) {
-    /*
-    color: #eff5ff;
     background-color: #37464f;
-    box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 #37464fab;
-    */
-    background-color: initial;
+    color: #e6f0ff;  
+}
+
+#guestDetails .accordion-button {
+    background-color: #ffffff;
+    color: #202020; 
+}
+
+#guestDetails .accordion-button:not(.collapsed) {
+    background-color: #ffffff;
+    color: #202020; 
 }
 
 .accordion-body {
@@ -181,12 +187,12 @@ td:has(a.selected) {
     color:white;   
 } */
 
-.privateRequest {
-    background-color: #3f043f;
-}
-
 .programDay {
     background-color: #37464f;    
+}
+
+.privateRequest {
+    background-color: #3f043f;
 }
 
 #calendarKey table.table-sm td {

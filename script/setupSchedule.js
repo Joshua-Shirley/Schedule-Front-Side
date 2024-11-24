@@ -8,8 +8,8 @@ const allSeasons = {
         for(var index = 0; index <= years; index++) {
             var seasonDate = new Date(currentYear - index, 10, 1);
             var element = this.startMessage(seasonDate);
-            this.progressBarAnnimation( element.querySelector("div.progress > div") );
-            var credentials = this.getCredentials(seasonDate);
+            this.progressBarAnnimation( element.querySelector("div.progress > div") );            
+            var credentials = settings.credentials(seasonDate);
             this.post(credentials, element);            
         }
     },
@@ -93,35 +93,5 @@ const allSeasons = {
         .catch(error => {
             console.error("Error: ", error);
         });
-    },
-    getCredentials: function (date) {
-
-        if(settings) {
-            const obj = {}
-            obj["userId"] = settings.passNumber;
-            obj["password"] = settings.password;
-            obj["date"] = date.toISOString();
-            return obj;
-        }
-        
-        var message = {
-            "tag": "div",
-            "children": [
-                {
-                    "tag": "p",
-                    "innerText": "Invalid Credentials - Add valid credentials on the settings page."
-                },
-                {
-                    "tag": "a",
-                    "attributes": [
-                        { "href": "settings.html" }
-                    ],
-                    "innerText": "Settings Page"
-                }
-            ]
-        }
-        errorDisplay.throw("Credentials", message);
-
-        return null;
-    },     
+    },  
 }

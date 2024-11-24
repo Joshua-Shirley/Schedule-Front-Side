@@ -151,9 +151,9 @@ const schedule = {
     loadView: function () {
         // find the daily array objects        
         try {
-            if (this.data.hasOwnProperty(this.date.toISOString().replace("000Z", "00Z"))) {
+            if (this.data.hasOwnProperty(this.date.toISOString())) {
 
-                var daily = this.data[this.date.toISOString().replace("000Z", "00Z")];
+                var daily = this.data[this.date.toISOString()];
 
                 // does the data need to be updated?
                 if (this.updateData(daily)) {

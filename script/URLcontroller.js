@@ -21,7 +21,7 @@ class URLControl {
     scheduleLink(date = this.date) {
         const params = new URLSearchParams();
         params.append("data", this.zeroDate(date).toISOString());                
-        return "schedule.html?" + params;
+        return "schedule-v2.html?" + params;
     }
 
     link(date = this.date) {

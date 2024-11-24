@@ -20,15 +20,24 @@ const Application = {
 
         // Pass Number
         let passNumber = document.getElementById("passNumber");
-        passNumber.addEventListener("input", Application.formatPassNumber);
+        //passNumber.addEventListener("input", Application.formatPassNumber);
 
         // Pass word
         let password = document.getElementById("password");
-        password.addEventListener("change", Application.validatePassWord);
+        //password.addEventListener("change", Application.validatePassWord);
 
         // Validation Button
         let validation = document.getElementById("checkValidation");
         validation.addEventListener("click", Application.validateLogin);
+
+        // Reset Button
+        if (settings.validated){
+            if( settings.passNumber == "11046941486v" ) {
+                let resetButton = document.querySelector("#resetAllData");
+                resetButton.classList.remove("hide");
+                resetButton.addEventListener("click", Application.reset);
+            }
+        }
     },
     validateForm(ev) {
         // Step 2 - Validate 
@@ -38,12 +47,17 @@ const Application = {
         
         Application.saveSettings();
 
+        // disable the validate button so it isn't called multiple times
         let button = document.querySelector("button[name='validate']");
         if( ev.target.checkValidity() ) {            
             button.disabled = false;
+            button.innerText = "Validate";
+            button.classList.remove("btn-danger");
+            button.classList.remove("hide");
+            button.classList.add("btn-primary");
         } else {
             button.disabled = true;
-        }
+        }      
     },
     formatPassNumber(ev) {
         let input = ev.target;
@@ -76,22 +90,46 @@ const Application = {
             //input.reportValidity();
         }
     },
-    validateLogin() {
+    validateLogin(ev) {
+        let button = ev.target;
+        button.innerText = "Validating";
+        button.classList.remove("btn-primary");
+        button.classList.add("btn-warning");
+
         let result = validateUser.initiate(settings, Application.callback);
+
         console.log(result);
     },
-    callback(data) {                
+    callback(data) { 
+
         settings.validated = false;
         if( data.result == "pass" ) {
+
             settings.validated = true;
             settings.fullName = data.details.instructor;
-            settings.skiArea = data.details.area;
+            const pattern = /\s\([\s\w\d\/]*\)/;
+            settings.skiArea = data.details.area.replace(pattern,"");
 
+            settings.save();
+            
             // mark the settings as complete validation
             document.getElementById("credentialsValidated").checked = true;
 
             // reveal the next page button link
+            let nextButton = document.querySelector("a#loadNextPage");
+            nextButton.classList.remove("invisible");
+            //nextButton.addEventListener("click", Application.preload);
+            Application.preload();
             
+            // disable the validate button so it isn't called multiple times
+            let validationButton = document.querySelector("#checkValidation");
+            validationButton.disabled = true;
+            validationButton.innerText = "Validated";
+            validationButton.classList.remove("btn-warning");
+            validationButton.classList.add("btn-success");            
+            
+
+
         } else {
             settings.validated = false;
 
@@ -106,6 +144,13 @@ const Application = {
             let validationCheckbox = document.getElementById("credentialsValidated");
             validationCheckbox.checked = false;
             validationCheckbox.setCustomValidity("failed");
+
+            // Validation Button
+            let validationButton = document.querySelector("#checkValidation");
+            validationButton.disabled = true;
+            validationButton.innerText = "Failed";
+            validationButton.classList.remove("btn-warning");
+            validationButton.classList.add("btn-danger");
         }        
     },
     loadSettings() {
@@ -134,6 +179,26 @@ const Application = {
             }
             settings.save();
         });
+    },
+    reset() {
+        localStorage.clear();
+        location.reload();
+    },
+    async preload() {
+        const url = "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/season";
+        const date = new Date( new Date().getFullYear(), 10, 1 );
+        console.log(date);
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(settings.credentials(date)),
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => {                
+            console.error("Error: ", error);
+        })
+
     }
 }
 

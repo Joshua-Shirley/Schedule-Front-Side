@@ -24,7 +24,7 @@
     <script src="script/htmlbuilder.js"></script>
     <script src="script/errorView.js?v=1"></script>
     <script src="script/loadSettings.js"></script>
-
+    
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -89,8 +89,8 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Schedule Password</label>
-                        <input type="text" class="form-control" id="password" name="password"
-                            aria-label="Schedule password" aria-describedby="password_desc" minlength="8" maxlength="8"
+                        <input type="password" class="form-control" id="password" name="password" value="$noW2425"
+                            aria-label="Schedule password" aria-describedby="password_desc" minlength="6" maxlength="12"
                             required>
                         <div id="password_desc">
                             Enter your password for instructor.snow.com
@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="false" name="validated" id="credentialsValidated">
+                        <input class="form-check-input" type="checkbox" name="validated" id="credentialsValidated" disabled>
                         <label class="form-check-label" for="credentialsValidated">
                             Credentials Validated
                         </label>
@@ -109,12 +109,11 @@
 
                     <div class="mb-3">
                         <button type="submit" class="btn btn-dark" name="submit" value="stepTwo">Save</button>                        
-                        <button type="button" class="btn btn-primary" name="validate" value="validate" id="checkValidation" disabled>Validate</button>
-                        
-                        <a href="loadSchedule.html" class="btn btn-dark invisible">Next Page</a>
+                        <button type="button" class="btn btn-primary hide" name="validate" value="validate" id="checkValidation" disabled>Validate</button>
+                        <button type="button" class="btn btn-danger hide" name="reset" id="resetAllData">Reset</button>
+                        <a href="loadschedule-v2.html" id="loadNextPage" class="btn btn-dark">Next Page</a>
                     </div>
                 </fieldset>
-
             </form>
 
 
@@ -140,16 +139,7 @@
     </main>
     <footer class="mt-auto py-3 my-0">
         <div class="d-flex flex-wrap justify-content-center">
-        </div>
-
-        <!--
-    <ul class="nav justify-content-center mb-3">
-      <li class="nav-item"><a href="schedule.html" class="nav-link px-2 text-body-light">Schedule</a></li>
-      <li class="nav-item"><a href="settings.html" class="nav-link px-2 text-body-light">Settings</a></li>
-      <li class="nav-item"><a href="guests.html" class="nav-link px-2 text-body-light">Guests</a></li>
-    </ul>
-    -->
-
+        </div>    
         <p class="fs-0 small text-center text-info pb-0 mb-0">© 2024 Ski Gaupo</p>
     </footer>
 
