@@ -162,6 +162,10 @@
             // Selected CSS
             document.querySelector("a.selected").classList.remove("selected");
             ev.target.classList.add("selected");
+
+            // Trigger a data update
+            //console.log( "Now: ", new Date().getTime() , "Last update: " , Schedule.lastUpdate.getTime() )
+            Schedule.updateRequired(Schedule.lastUpdate);            
         }
 
         function calendarMonthLinks() {

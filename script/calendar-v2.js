@@ -168,15 +168,12 @@ class Calendar {
                         {
                             "tag": "a",
                             "class": ["btn", "btn-dark", "calendar-today"],
-                            "attributes": [
-                                {
-                                    "onclick" : ""
-                                },
+                            "attributes": [                               
                                 {
                                     "href": "" //this.linkBuilder(new Date()),
                                 }
                             ],
-                            "innerText": "Today"
+                            "innerText": "Refresh"
                         }
                     ]
                 },
