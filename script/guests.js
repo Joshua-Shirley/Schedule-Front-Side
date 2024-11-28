@@ -111,8 +111,7 @@ const Guests = {
     populateGuests: function () {
         Guests.privateLessons.forEach(lesson => {
             if (lesson.hasOwnProperty("client name")) {
-                var guest = new Guest(lesson["client name"], lesson["guest name"], lesson["city, state"]);
-                //var hash = lesson["client name"];
+                var guest = new Guest(lesson["client name"], lesson["guest name"], lesson["city, state"]);                
                 var hash = guest["hash"]
                 try {
                     Guests.list[hash] = guest;
@@ -124,8 +123,7 @@ const Guests = {
         });
     },
     matchLessons: function () {
-        Object.keys(Guests.list).forEach(hash => {
-            //Guests.list[name].add(Guests.pastLessons(name));
+        Object.keys(Guests.list).forEach(hash => {            
             var guest = Guests.list[hash];
             Guests.list[hash].add(Guests.pastLessons(guest));
         });
@@ -151,17 +149,7 @@ const Guests = {
                     "Last": guest["head_of_house"]["last"],
                     "First": guest["head_of_house"]["first"]
                 }
-                if (guest["address"] != undefined) {
-                    // if (guest["address"]["city"] != undefined) {
-                    //     rowObj["City"] = guest["address"]["city"];
-                    // }
-                    // if (guest["address"]["state"] != undefined) {
-                    //     rowObj["State"] = guest["address"]["state"];
-                    // }
-                    // else {
-                    //     rowObj["City"] = "";
-                    //     rowObj["State"] = "";
-                    // } 
+                if (guest["address"] != undefined) {                    
                     if (guest.address.full != undefined) {
                         rowObj["Residence"] = guest.address.full;
                     } else {

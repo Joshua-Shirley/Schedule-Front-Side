@@ -96,6 +96,7 @@ class TableMaker {
     cellWithObj(innerHTML) {
         var cell = {
             "tag": "td",
+            "class": ["text-end"],
             "children": [ innerHTML ]                        
         }
         return cell;

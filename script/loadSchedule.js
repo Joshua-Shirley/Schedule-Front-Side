@@ -104,8 +104,9 @@ const loadFullSchedule = {
     getURL: function () {        
         return this.bucket + "data/" + settings.passNumber + "/" + this.season + ".json";
     },
-    mergeSchedule: function (incoming) {        
-        if (incoming != null) {
+    mergeSchedule: function (object) {        
+        if (object != null) {
+            let incoming = object.schedule;
             Object.keys(incoming).forEach(key => {
                 var keyDate = new Date(key);
                 var date = new Date(keyDate.getFullYear(), keyDate.getMonth(), keyDate.getDate());

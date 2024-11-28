@@ -12,14 +12,16 @@ const Schedule = {
         let season = "2024-2025";
         let path = Schedule.bucket + "data/" + Schedule.settings.passNumber + "/" + season + ".json";
         fetch( path )
-        .then(response => response.json())                             
+        .then(response => response.json())                                    
         .then(data => {
             Schedule.mergeSchedule(data.schedule);
             Schedule.updateRequired(new Date(data.last_modified));
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            console.error(error);           
+        });
     },
-    monthly: () => {
+    monthly: () => {        
         const path = "https://4z2h7s7pze.execute-api.us-west-1.amazonaws.com/v1/monthly";
         fetch( path , { method: "POST", body: JSON.stringify(Schedule.settings.credentials(new Date())), headers: { "Content-Type": "application/json" } })
         .then(response => response.json())
@@ -45,7 +47,8 @@ const Schedule = {
         const minutes = 15;
         const timeDiff = ( milliseconds * seconds * minutes );
 
-        if ( diff > timeDiff) {            
+        if ( diff > timeDiff) { 
+            document.querySelector("#updatingBadge").classList.remove("invisible");            
             Schedule.monthly();
             Schedule.updateSeason();
         } else {

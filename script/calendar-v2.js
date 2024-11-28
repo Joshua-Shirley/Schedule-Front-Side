@@ -76,33 +76,6 @@ class Calendar {
         return html;
     }
 
-    // selectYear() {
-    //     var yearOptions = [];
-    //     const seasons = [ "2024-2025" ]
-    //     for(var index = 0; index <= parseInt( settings.seasonRange ); index++) {
-    //         var year = (new Date().getFullYear() + 1) - index;
-    //         var option = {
-    //             "tag": "option",
-    //             "attributes": [
-    //                 { "value": year.toString() }
-    //             ],
-    //             "innerText" : year.toString()
-    //         } 
-    //         yearOptions.push(option);
-    //     }
-    //     var select = {
-    //         "tag" : "select",
-    //         "class" : ["calendar-select"],
-    //         "id" : "calendarYears",
-    //         "attributes" : [
-    //             { "name" : "years" },
-    //             { "aria-label": "Default select"}
-    //         ],
-    //         "children": yearOptions
-    //     }
-    //     return select;
-    // }
-
     selectSeason() {
         var seasons = [];
         const year = new Date().getFullYear();
@@ -196,6 +169,9 @@ class Calendar {
                             "tag": "a",
                             "class": ["btn", "btn-dark", "calendar-today"],
                             "attributes": [
+                                {
+                                    "onclick" : ""
+                                },
                                 {
                                     "href": "" //this.linkBuilder(new Date()),
                                 }
@@ -324,8 +300,8 @@ class Calendar {
                 {
                     "tag": "a",
                     "class": classes,
-                    "attributes": [
-                        {
+                    "attributes": [                       
+                        {                            
                             "date": dateString,
                             "href": this.linkBuilder(date),
                         }
